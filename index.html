@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a12">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>Ramadan</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☪️</text></svg>">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Ambient Background -->
+    <div class="bg-layer">
+        <div class="bg-gradient"></div>
+        <div class="stars" id="stars"></div>
+        <div class="ambient-glow"></div>
+    </div>
+
+    <!-- Moon -->
+    <div class="moon">
+        <div class="moon-glow"></div>
+        <div class="moon-body"></div>
+        <div class="moon-shadow"></div>
+    </div>
+
+    <!-- Main App -->
+    <main class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="location">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span id="locationText">Doha, Qatar</span>
+            </div>
+            <div class="brand">
+                <span class="brand-icon">☪</span>
+                <span class="brand-text">Ramadan Mubarak</span>
+            </div>
+            <div class="hijri-date" id="hijriDate"></div>
+        </header>
+
+        <!-- Main Content -->
+        <section class="content">
+            <!-- Left: Time & Progress -->
+            <div class="panel panel-time">
+                <time class="clock">
+                    <span class="clock-hours" id="hours">00</span>
+                    <span class="clock-sep">:</span>
+                    <span class="clock-minutes" id="minutes">00</span>
+                    <span class="clock-seconds" id="seconds">00</span>
+                    <span class="clock-period" id="period">AM</span>
+                </time>
+                <div class="date" id="gregorianDate"></div>
+                
+                <div class="ramadan-progress tv-focusable">
+                    <div class="progress-header">
+                        <span>Ramadan Progress</span>
+                        <span id="ramadanDayText">Day 1 of 30</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-labels">
+                        <span>1</span>
+                        <span>10</span>
+                        <span>20</span>
+                        <span>30</span>
+                    </div>
+                </div>
+
+                <!-- Last 10 Nights -->
+                <div class="last-ten" id="lastTenSection">
+                    <div class="last-ten-badge">
+                        <span class="sparkle">✦</span>
+                        Last 10 Nights
+                        <span class="sparkle">✦</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center: Prayer Times -->
+            <div class="panel panel-prayers tv-focusable">
+                <h2 class="panel-title">
+                    <span class="title-icon">🕌</span>
+                    Prayer Times
+                </h2>
+                
+                <div class="prayers-list" id="prayersList"></div>
+                
+                <div class="next-prayer">
+                    <div class="next-prayer-label">
+                        <span id="nextPrayerName">Fajr</span> in
+                    </div>
+                    <div class="next-prayer-time" id="nextPrayerCountdown">00:00:00</div>
+                </div>
+            </div>
+
+            <!-- Right: Iftar & Fast Info -->
+            <div class="panel panel-info">
+                <!-- Iftar Countdown -->
+                <div class="iftar-card tv-focusable">
+                    <div class="iftar-label" id="iftarLabel">
+                        <span class="iftar-icon">🌙</span>
+                        Iftar in
+                    </div>
+                    <div class="iftar-time" id="iftarCountdown">00:00:00</div>
+                    <div class="iftar-target">
+                        at <span id="iftarTargetTime">18:00</span>
+                    </div>
+                </div>
+
+                <!-- Today's Fast -->
+                <div class="fast-card tv-focusable">
+                    <div class="fast-title">Today's Fast</div>
+                    <div class="fast-times">
+                        <div class="fast-time-item">
+                            <span class="fast-label">Suhoor</span>
+                            <span class="fast-value" id="suhoorTime">04:30</span>
+                        </div>
+                        <div class="fast-duration" id="fastDuration">13h 30m</div>
+                        <div class="fast-time-item">
+                            <span class="fast-label">Iftar</span>
+                            <span class="fast-value" id="iftarTimeDisplay">18:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weather -->
+                <div class="weather-mini tv-focusable">
+                    <span class="weather-icon" id="weatherIcon">☀️</span>
+                    <span class="weather-temp" id="weatherTemp">28°</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Daily Verse -->
+        <div class="verse-banner tv-focusable">
+            <div class="verse-arabic" id="verseArabic"></div>
+            <div class="verse-surah" id="verseSurah"></div>
+        </div>
+
+        <!-- TV Remote Controls Hint -->
+        <div class="tv-controls" id="tvControls">
+            <div class="control-item">
+                <span class="control-key">◀▶</span>
+                <span class="control-label">Navigate</span>
+            </div>
+            <div class="control-item">
+                <span class="control-key">OK</span>
+                <span class="control-label">Select</span>
+            </div>
+            <div class="control-item">
+                <span class="control-key color-red">●</span>
+                <span class="control-label">Refresh</span>
+            </div>
+            <div class="control-item">
+                <span class="control-key color-green">●</span>
+                <span class="control-label">Fullscreen</span>
+            </div>
+            <div class="control-item">
+                <span class="control-key color-yellow">●</span>
+                <span class="control-label">New Verse</span>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

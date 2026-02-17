@@ -1,0 +1,714 @@
+/* ==========================================
+   Ramadan TV Standby App
+   Optimized for Samsung TV Web Browser
+   ========================================== */
+
+/* === CSS Variables === */
+:root {
+    --bg-dark: #0a0a12;
+    --bg-card: rgba(255, 255, 255, 0.04);
+    --gold: #d4a853;
+    --gold-dim: rgba(212, 168, 83, 0.3);
+    --green: #4ade80;
+    --green-dim: rgba(74, 222, 128, 0.15);
+    --text: #ffffff;
+    --text-dim: rgba(255, 255, 255, 0.6);
+    --text-muted: rgba(255, 255, 255, 0.35);
+    --border: rgba(255, 255, 255, 0.08);
+    --glow: rgba(212, 168, 83, 0.4);
+}
+
+/* === Reset & Base (TV Optimized) === */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* Disable text selection for TV */
+    -webkit-user-select: none;
+    user-select: none;
+    /* Disable tap highlight */
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    /* Fixed TV resolution */
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+}
+
+body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* TV safe area */
+    padding: 0;
+    cursor: none;
+}
+
+/* === Background Layers === */
+.bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.bg-gradient {
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(ellipse 80% 50% at 20% 100%, rgba(30, 58, 95, 0.5) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 80% 20%, rgba(55, 48, 107, 0.4) 0%, transparent 50%),
+        linear-gradient(180deg, #0a0a12 0%, #0d0d1a 100%);
+}
+
+.stars {
+    position: absolute;
+    inset: 0;
+}
+
+.star {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    animation: twinkle 4s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.9; }
+}
+
+.ambient-glow {
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle, rgba(212, 168, 83, 0.1) 0%, transparent 60%);
+    animation: ambientPulse 8s ease-in-out infinite;
+}
+
+@keyframes ambientPulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+/* === Moon === */
+.moon {
+    position: fixed;
+    top: 50px;
+    right: 70px;
+    width: 110px;
+    height: 110px;
+    z-index: 1;
+    animation: moonFloat 10s ease-in-out infinite;
+}
+
+@keyframes moonFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+.moon-glow {
+    position: absolute;
+    inset: -35px;
+    background: radial-gradient(circle, rgba(255, 223, 150, 0.35) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.moon-body {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #fff9e6 0%, #ffd966 50%, #e6b800 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 80px rgba(255, 215, 0, 0.6);
+}
+
+.moon-shadow {
+    position: absolute;
+    top: 5px;
+    left: 28px;
+    width: 85px;
+    height: 85px;
+    background: var(--bg-dark);
+    border-radius: 50%;
+}
+
+/* === Main App Layout === */
+.app {
+    position: relative;
+    z-index: 10;
+    width: 1920px;
+    height: 1080px;
+    padding: 35px 55px;
+    display: flex;
+    flex-direction: column;
+    animation: burnProtect 180s linear infinite;
+}
+
+@keyframes burnProtect {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(2px, 1px); }
+    50% { transform: translate(0, 2px); }
+    75% { transform: translate(-2px, 1px); }
+}
+
+/* === Header === */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    height: 60px;
+}
+
+.location {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-dim);
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.location svg {
+    opacity: 0.7;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, rgba(212, 168, 83, 0.18) 0%, rgba(74, 222, 128, 0.12) 100%);
+    border: 1px solid var(--gold-dim);
+    border-radius: 50px;
+    animation: brandGlow 4s ease-in-out infinite;
+}
+
+@keyframes brandGlow {
+    0%, 100% { box-shadow: 0 0 25px rgba(212, 168, 83, 0.15); }
+    50% { box-shadow: 0 0 40px rgba(212, 168, 83, 0.25); }
+}
+
+.brand-icon {
+    font-size: 28px;
+    color: var(--gold);
+}
+
+.brand-text {
+    font-size: 22px;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--gold) 0%, #fff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hijri-date {
+    font-family: 'Amiri', serif;
+    font-size: 24px;
+    color: var(--gold);
+    direction: rtl;
+}
+
+/* === Content Grid === */
+.content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 0.9fr;
+    gap: 35px;
+    min-height: 0;
+}
+
+/* === Panels === */
+.panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text);
+}
+
+.title-icon {
+    font-size: 28px;
+}
+
+/* === Clock Panel === */
+.panel-time {
+    justify-content: center;
+    padding-left: 15px;
+}
+
+.clock {
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+    margin-bottom: 10px;
+}
+
+.clock-hours,
+.clock-minutes {
+    font-size: 140px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -6px;
+}
+
+.clock-sep {
+    font-size: 120px;
+    font-weight: 300;
+    color: var(--text-dim);
+    animation: blink 1s ease-in-out infinite;
+    margin: 0 -5px;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.clock-seconds {
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--text-muted);
+    margin-left: 12px;
+}
+
+.clock-period {
+    font-size: 40px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-left: 16px;
+}
+
+.date {
+    font-size: 26px;
+    font-weight: 300;
+    color: var(--text-dim);
+    margin-bottom: 35px;
+}
+
+/* === Ramadan Progress === */
+.ramadan-progress {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 22px 28px;
+    margin-bottom: 20px;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    font-size: 16px;
+    color: var(--text-dim);
+}
+
+.progress-header span:last-child {
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.progress-bar {
+    position: relative;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--green) 100%);
+    border-radius: 5px;
+    transition: width 1s ease;
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* === Last 10 Nights === */
+.last-ten {
+    display: none;
+    background: linear-gradient(135deg, rgba(212, 168, 83, 0.12) 0%, rgba(147, 51, 234, 0.12) 100%);
+    border: 1px solid rgba(212, 168, 83, 0.35);
+    border-radius: 16px;
+    padding: 18px;
+    text-align: center;
+    animation: lastTenGlow 3s ease-in-out infinite;
+}
+
+@keyframes lastTenGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(212, 168, 83, 0.1); }
+    50% { box-shadow: 0 0 40px rgba(212, 168, 83, 0.2); }
+}
+
+.last-ten-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--gold);
+}
+
+.sparkle {
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.3); }
+}
+
+/* === Prayer Times Panel === */
+.panel-prayers {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 28px;
+}
+
+.prayers-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.prayer-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid transparent;
+    border-radius: 14px;
+    transition: all 0.3s ease;
+}
+
+.prayer-item.active {
+    background: linear-gradient(135deg, rgba(212, 168, 83, 0.18) 0%, rgba(74, 222, 128, 0.12) 100%);
+    border-color: var(--gold-dim);
+}
+
+.prayer-item.passed {
+    opacity: 0.35;
+}
+
+.prayer-name {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.prayer-icon {
+    font-size: 24px;
+}
+
+.prayer-time {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+}
+
+.prayer-item.active .prayer-time {
+    color: var(--gold);
+}
+
+/* === Next Prayer Countdown === */
+.next-prayer {
+    margin-top: 18px;
+    padding: 20px;
+    background: var(--green-dim);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    border-radius: 16px;
+    text-align: center;
+}
+
+.next-prayer-label {
+    font-size: 16px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+}
+
+.next-prayer-label span {
+    color: var(--gold);
+    font-weight: 600;
+}
+
+.next-prayer-time {
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--green);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 3px;
+}
+
+/* === Info Panel === */
+.panel-info {
+    gap: 18px;
+}
+
+/* === Iftar Card === */
+.iftar-card {
+    background: linear-gradient(135deg, rgba(212, 168, 83, 0.14) 0%, rgba(234, 179, 8, 0.1) 100%);
+    border: 2px solid var(--gold-dim);
+    border-radius: 24px;
+    padding: 28px;
+    text-align: center;
+}
+
+.iftar-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 20px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+}
+
+.iftar-icon {
+    font-size: 26px;
+}
+
+.iftar-time {
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 4px;
+    text-shadow: 0 0 50px rgba(212, 168, 83, 0.5);
+}
+
+.iftar-target {
+    margin-top: 10px;
+    font-size: 16px;
+    color: var(--text-muted);
+}
+
+.iftar-target span {
+    color: var(--gold);
+    font-weight: 600;
+}
+
+/* === Today's Fast Card === */
+.fast-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 22px;
+    flex: 1;
+}
+
+.fast-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.fast-times {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.fast-time-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.fast-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.fast-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+}
+
+.fast-duration {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--green);
+    padding: 8px 16px;
+    background: var(--green-dim);
+    border-radius: 20px;
+}
+
+/* === Weather Mini === */
+.weather-mini {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+}
+
+.weather-icon {
+    font-size: 36px;
+}
+
+.weather-temp {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--text-dim);
+}
+
+/* === Verse Banner (Bottom) === */
+.verse-banner {
+    margin-top: 25px;
+    padding: 24px 40px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    text-align: center;
+}
+
+.verse-arabic {
+    font-family: 'Amiri', serif;
+    font-size: 34px;
+    color: var(--gold);
+    direction: rtl;
+    line-height: 1.8;
+    margin-bottom: 10px;
+}
+
+.verse-surah {
+    font-size: 15px;
+    color: var(--text-dim);
+    font-weight: 500;
+}
+
+/* === TV Remote Controls === */
+.tv-controls {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 30px;
+    padding: 14px 28px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.tv-controls.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.control-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.control-key {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 32px;
+    padding: 0 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gold);
+}
+
+.control-key.color-red { color: #ef4444; }
+.control-key.color-green { color: #22c55e; }
+.control-key.color-yellow { color: #eab308; }
+.control-key.color-blue { color: #3b82f6; }
+
+.control-label {
+    font-size: 14px;
+    color: var(--text-dim);
+}
+
+/* === TV Focusable Elements === */
+.tv-focusable {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tv-focusable.focused {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 3px var(--gold), 0 0 30px rgba(212, 168, 83, 0.4);
+    z-index: 10;
+}
+
+/* === TV Focus States === */
+*:focus {
+    outline: none;
+}
+
+/* === Samsung TV Specific === */
+@supports (-webkit-overflow-scrolling: touch) {
+    body {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Prevent zoom */
+@media screen {
+    html {
+        touch-action: manipulation;
+    }
+}
+
